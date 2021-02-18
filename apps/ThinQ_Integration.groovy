@@ -11,30 +11,36 @@
  * and thinq2-python as the research they did and their code as a reference has been invaluable
  */
 
+
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+
+import static HttpUtils.httpGet
+import static HttpUtils.httpPost
 import groovy.transform.Field
-import java.text.SimpleDateFormat
 import groovy.json.JsonSlurper
 
 @Field List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
 @Field String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 @Field int AUTH_RETRY_MAX = 2
 
-definition(
-	name: "ThinQ Integration",
-	namespace: "dcm.thinq",
-	author: "Dominick Meglio",
-	description: "Integrate LG ThinQ smart devices with Hubitat.",
-	category: "My Apps",
-	iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
-	iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
-	iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
-	documentationLink: "https://github.com/dcmeglio/hubitat-thinq")
-
-preferences {
-	page(name: "prefMain")
-	page(name: "prefCert")
-	page(name: "prefDevices")
-}
+//definition(
+//	name: "ThinQ Integration",
+//	namespace: "dcm.thinq",
+//	author: "Dominick Meglio",
+//	description: "Integrate LG ThinQ smart devices with Hubitat.",
+//	category: "My Apps",
+//	iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+//	iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
+//	iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
+//	documentationLink: "https://github.com/dcmeglio/hubitat-thinq")
+//
+//preferences {
+//	page(name: "prefMain")
+//	page(name: "prefCert")
+//	page(name: "prefDevices")
+//}
 
 @Field static def certGeneratorUrl = "https://lgthinq.azurewebsites.net/api/certdata"
 @Field static def gatewayUrl = "https://route.lgthinq.com:46030/v1/service/application/gateway-uri"
@@ -195,11 +201,12 @@ def prefMain() {
 			state.mqttServer = mqttResult.mqttServer
 	}
 
-	return dynamicPage(name: "prefMain", title: "LG ThinQ OAuth", nextPage: "prefCert", uninstall:false, install: false) {
-		section {
+	state.save(STATE_FILE)
+//	return dynamicPage(name: "prefMain", title: "LG ThinQ OAuth", nextPage: "prefCert", uninstall:false, install: false) {
+//		section {
 			state.prevUrl = url
-			input "logLevel", "enum", title: "Log Level", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
-			input "region", "enum", title: "Select your region", options: countriesList, required: true, submitOnChange: true
+//			input "logLevel", "enum", title: "Log Level", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
+//			input "region", "enum", title: "Select your region", options: countriesList, required: true, submitOnChange: true
 			if (state.countryCode != null && state.langCode != null) {
 				def desc = ""
 				if (!state.access_token) {
@@ -208,11 +215,14 @@ def prefMain() {
 				else {
 					desc = "Your Hubitat and LG ThinQ accounts are connected"
 				}
-				paragraph "When you click the link below a popup will open to allow you to login to your LG account. After you login, the popup will go blank. At that point, copy the URL from that popup, close the popup and wait for this screen to reload. At that point, paste the URL into the box below and click Next."
-				href url: oauthInitialize(), style: "external", required: true, title: "LG ThinQ Account Authorization", description: desc
-				input "url", "text", title: "Enter the URL you are redirected to after logging in"
-			}
-		}
+//				paragraph "When you click the link below a popup will open to allow you to login to your LG account. After you login, the popup will go blank. At that point, copy the URL from that popup, close the popup and wait for this screen to reload. At that point, paste the URL into the box below and click Next."
+//				href url: oauthInitialize(), style: "external", required: true, title: "LG ThinQ Account Authorization", description: desc
+				println(oauthInitialize())
+				url = System.console().readLine("Enter the URL you are redirected to after logging in")
+//				input "url", "text", title: "Enter the URL you are redirected to after logging in"
+//			}
+//		}
+				state.save(STATE_FILE)
 	}
 }
 
@@ -238,6 +248,7 @@ def prefDevices() {
 		generateKeyAndCSR()
 	}
 	if (url != state.prevUrl) {
+url = state.prevUrl
 		def oauthDetails = getOAuthDetailsFromUrl()
 		state.oauth_url = oauthDetails.url[0..-2]
 		def result = getAccessToken([code: oauthDetails.code, grant_type: "authorization_code", redirect_uri: "https://kr.m.lgaccount.com/login/iabClose"])
@@ -248,6 +259,7 @@ def prefDevices() {
 		state.user_number = oauthDetails.user_number
 		state.access_token = result.access_token
 		state.refresh_token = result.refresh_token
+state.save(STATE_FILE)
 	}
 
 	register()
@@ -272,14 +284,16 @@ def prefDevices() {
 		state.foundDevices << [id: it.deviceId, name: it.alias, type: it.deviceType, version: it.platformType, modelJson: getModelJson(it.modelJsonUri)]
 	}
 
-	return dynamicPage(name: "prefDevices", title: "LG ThinQ OAuth",  uninstall:false, install: true) {
-		section {
-			input "thinqDevices", "enum", title: "Devices", required: true, options: deviceList, multiple: true
-		}
-	}
+	state.save(STATE_FILE)
+	thinqDevices = deviceList
+//	return dynamicPage(name: "prefDevices", title: "LG ThinQ OAuth",  uninstall:false, install: true) {
+//		section {
+//			input "thinqDevices", "enum", title: "Devices", required: true, options: deviceList, multiple: true
+//		}
+//	}
 }
 
-def returnErrorPage(message, nextPage) {
+def returnErrorPage(message, nextPage) { //TODO
 		return dynamicPage(name: "prefError", title: "Error Occurred",  nextPage: nextPage, uninstall:false, install: false) {
 		section {
 			paragraph message
@@ -312,7 +326,7 @@ def initialize() {
 	def hasV1Device = false
 	cleanupChildDevices()
 	for (d in thinqDevices) {
-		def deviceDetails = state.foundDevices.find { it.id == d }
+		def deviceDetails = state.foundDevices.find { it.id == d.key }
 		def driverName = ""
 		switch (deviceDetails.type) {
 			case deviceTypeConstants.Dryer:
@@ -630,8 +644,9 @@ def getOAuthDetailsFromUrl() {
 }
 
 def getTimestamp() {
-		def date = new Date()
-		return date.format("EEE, dd MMM yyyy HH:mm:ss '+0000'", TimeZone.getTimeZone('UTC'))
+	OffsetDateTime date = OffsetDateTime.now(ZoneOffset.UTC)
+	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss '+0000'").withLocale(Locale.ENGLISH)
+	return date.format(formatter)
 }
 
 def getAccessToken(body) {
@@ -1320,4 +1335,53 @@ private logger(level, msg) {
 			log."${level}" "${app.name} ${msg}"
 		}
 	}
+}
+
+//prefMain()
+//generateKeyAndCSR()
+url = state.prevUrl
+prefDevices()
+installed()
+state.save(STATE_FILE)
+
+
+@Field State state = State.load(STATE_FILE)
+@Field def logLevel = 3
+@Field def region = "pl-PL"
+@Field def url
+@Field
+static String STATE_FILE = "c:/dev/state.json"
+@Field
+String certSource = "Use Cloud Service"
+
+@Field Log log = new Log()
+@Field App app = new App()
+@Field Object csr
+@Field def thinqDevices
+@Field def privateKey
+
+@Field def devices = [:]
+
+def getChildDevices() {
+	return devices.values()
+}
+
+void deleteChildDevice(String deviceNetworkId) {
+	devices.remove(deviceNetworkId)
+}
+
+Device getChildDevice(String deviceNetworkId) {
+	return devices[deviceNetworkId]
+}
+
+Device addChildDevice(String s1, String driverName, String deviceNetworkId, int id, def meta) {
+	Device device = new Device()
+	device.setDeviceNetworkId(deviceNetworkId)
+	device.meta = meta
+	devices[deviceNetworkId] = device
+	return device
+}
+
+void schedule(String cron, Boolean refreshV1Devices) {
+	// nop
 }
