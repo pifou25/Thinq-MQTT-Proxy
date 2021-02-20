@@ -69,8 +69,13 @@ static void http(HttpRequest request, LinkedHashMap<String, Object> map, Closure
     try (def response = httpClient.execute(request)) {
         Response resp = new Response()
         def ent = EntityUtils.toString(response.getEntity())
-        def jsonSlurper = new JsonSlurper()
-        resp.data = jsonSlurper.parseText(ent)
+        if (map.containsKey("textParser")) {
+            resp.data = [:]
+            resp.data.text = ent
+        } else {
+            def jsonSlurper = new JsonSlurper()
+            resp.data = jsonSlurper.parseText(ent)
+        }
         if (response.original.code == 200) {
             closure.call(resp)
         } else

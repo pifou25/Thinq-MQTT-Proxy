@@ -327,22 +327,22 @@ def initialize() {
 	cleanupChildDevices()
 	for (d in thinqDevices) {
 		def deviceDetails = state.foundDevices.find { it.id == d.key }
-		def driverName = ""
+		def driverName
 		switch (deviceDetails.type) {
 			case deviceTypeConstants.Dryer:
-				driverName = "LG ThinQ Dryer"
+				driverName = new ThinQ_Dryer()
 				break
 			case deviceTypeConstants.Washer:
-				driverName = "LG ThinQ Washer"
+				driverName = new ThinQ_Washer()
 				break
 			case deviceTypeConstants.Fridge:
-				driverName = "LG ThinQ Fridge"
+				driverName = new ThinQ_Fridge()
 				break
 			case deviceTypeConstants.Oven:
-				driverName = "LG ThinQ Oven"
+				driverName = new ThinQ_Oven()
 				break
 			case deviceTypeConstants.Dishwasher:
-				driverName = "LG ThinQ Dishwasher"
+				driverName = new ThinQ_Dishwasher()
 				break
 		}
 		if (!hasV1Device)
@@ -1356,6 +1356,7 @@ String certSource = "Use Cloud Service"
 
 @Field Log log = new Log()
 @Field App app = new App()
+@Field Interfaces interfaces = new Interfaces()
 @Field Object csr
 @Field def thinqDevices
 @Field def privateKey
@@ -1374,11 +1375,17 @@ Device getChildDevice(String deviceNetworkId) {
 	return devices[deviceNetworkId]
 }
 
-Device addChildDevice(String s1, String driverName, String deviceNetworkId, int id, def meta) {
+Device addChildDevice(String s1, def driverName, String deviceNetworkId, int id, def meta) {
 	Device device = new Device()
 	device.setDeviceNetworkId(deviceNetworkId)
 	device.meta = meta
 	devices[deviceNetworkId] = device
+	device.driver = driverName
+	driverName.device = device
+	driverName.interfaces = interfaces
+	driverName.log = log
+	driverName.logLevel = logLevel
+	driverName.parent = this
 	return device
 }
 

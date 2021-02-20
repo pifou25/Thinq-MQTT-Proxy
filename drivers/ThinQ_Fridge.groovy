@@ -67,7 +67,7 @@ def mqttConnectUntilSuccessful() {
                             ignoreSSLIssues: true)
     pauseExecution(3000)
     for (sub in mqtt.subscriptions) {
-        interfaces.mqtt.subscribe(sub, 0)
+        interfaces.mqtt.subscribe(sub, 0, this)
     }
     return true
   }
@@ -166,4 +166,39 @@ private logger(level, msg) {
       log."${level}" "${device.displayName} ${msg}"
     }
   }
+}
+
+@Field def parent
+@Field Log log
+@Field def logLevel
+@Field Device device
+@Field Interfaces interfaces
+@Field boolean logDescText
+
+void sendEvent(LinkedHashMap<String, Object> eventMap) {
+    log.info(eventMap)
+}
+
+static String getTemperatureScale() {
+    "C"
+}
+
+static def fahrenheitToCelsius(def temp) {
+    null
+}
+
+static def celsiusToFahrenheit(def temp) {
+    null
+}
+
+String getDataValue(String key) {
+    return device.getDataValue(key)
+}
+
+void pauseExecution(int time) {
+
+}
+
+void runIn(int integer, String s) {
+
 }

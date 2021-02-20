@@ -1,17 +1,17 @@
 class Log {
-    void error(GString message) {
-        println(message)
+    void error(Object message) {
+        println(message.toString())
     }
-    void warn(GString message) {
-        println(message)
+    void warn(Object message) {
+        println(message.toString())
     }
-    void info(GString message) {
-        println(message)
+    void info(Object message) {
+        println(message.toString())
     }
     void debug(Object message) {
         println(message.toString())
     }
-    void trace(GString message) {
-        println(message)
+    void trace(Object message) {
+        println(message.toString())
     }
 }
