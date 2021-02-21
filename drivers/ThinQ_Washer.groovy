@@ -5,44 +5,45 @@
  *
  */
 
-import groovy.transform.Field
 import groovy.json.JsonSlurper
 
-@Field List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
-@Field String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
+class ThinQ_Washer extends Device {
 
-metadata {
-    definition(name: "LG ThinQ Washer", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
-        capability "Sensor"
-        capability "Switch"
-        capability "Initialize"
+List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
+String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 
-        attribute "runTime", "number"
-        attribute "runTimeDisplay", "string"
-        attribute "remainingTime", "number"
-        attribute "remainingTimeDisplay", "string"
-        attribute "delayTime", "number"
-        attribute "delayTimeDisplay", "string"
-        attribute "finishTimeDisplay", "string"
-        attribute "currentState", "string"
-        attribute "error", "string"
-        attribute "course", "string"
-        attribute "smartCourse", "string"
-        attribute "remoteStart", "string"
-        attribute "soilLevel", "string"
-        attribute "spinSpeed", "string"
-        attribute "temperatureLevel", "string"
-        attribute "temperatureTarget", "string"
-        attribute "doorLock", "string"
-    }
-
-    preferences {
-      section { // General
-        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
-        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
-      }
-    }
-}
+//    metadata {
+//        definition(name: "LG ThinQ Washer", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
+//            capability "Sensor"
+//            capability "Switch"
+//            capability "Initialize"
+//
+//            attribute "runTime", "number"
+//            attribute "runTimeDisplay", "string"
+//            attribute "remainingTime", "number"
+//            attribute "remainingTimeDisplay", "string"
+//            attribute "delayTime", "number"
+//            attribute "delayTimeDisplay", "string"
+//            attribute "finishTimeDisplay", "string"
+//            attribute "currentState", "string"
+//            attribute "error", "string"
+//            attribute "course", "string"
+//            attribute "smartCourse", "string"
+//            attribute "remoteStart", "string"
+//            attribute "soilLevel", "string"
+//            attribute "spinSpeed", "string"
+//            attribute "temperatureLevel", "string"
+//            attribute "temperatureTarget", "string"
+//            attribute "doorLock", "string"
+//        }
+//
+//        preferences {
+//            section { // General
+//                input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
+//                input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
+//            }
+//        }
+//    }
 
 def uninstalled() {
     logger("debug", "uninstalled()")
@@ -223,28 +224,4 @@ private logger(level, msg) {
     }
   }
 }
-
-@Field def parent
-@Field Log log
-@Field def logLevel
-@Field Device device
-@Field Interfaces interfaces
-@Field boolean logDescText
-
-void sendEvent(LinkedHashMap<String, Object> eventMap) {
-    log.info(eventMap)
 }
-
-String getDataValue(String key) {
-    return device.getDataValue(key)
-}
-
-void pauseExecution(int time) {
-
-}
-
-void runIn(int integer, String s) {
-
-}
-
-@Field def location = [timeZone: TimeZone.default]

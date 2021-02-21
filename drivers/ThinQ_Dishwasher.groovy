@@ -5,45 +5,46 @@
  *
  */
 
-import groovy.transform.Field
 import groovy.json.JsonSlurper
 
-@Field List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
-@Field String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
+class ThinQ_Dishwasher extends Device {
 
-metadata {
-    definition(name: "LG ThinQ Dishwasher", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
-        capability "Sensor"
-        capability "Switch"
-        capability "ContactSensor"
-        capability "Initialize"
+List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
+String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 
-        attribute "runTime", "number"
-        attribute "runTimeDisplay", "string"
-        attribute "remainingTime", "number"
-        attribute "remainingTimeDisplay", "string"
-        attribute "delayTime", "number"
-        attribute "delayTimeDisplay", "string"
-        attribute "finishTimeDisplay", "string"
-        attribute "currentState", "string"
-        attribute "error", "string"
-        attribute "course", "string"
-        attribute "smartCourse", "string"
-        attribute "steam", "string"
-        attribute "highTemp", "string"
-        attribute "extraDry", "string"
-        attribute "halfLoad", "string"
-        attribute "dualZone", "string"
-        attribute "nightDry", "string"
-    }
-
-    preferences {
-      section { // General
-        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
-        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
-      }
-    }
-}
+//metadata {
+//    definition(name: "LG ThinQ Dishwasher", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
+//        capability "Sensor"
+//        capability "Switch"
+//        capability "ContactSensor"
+//        capability "Initialize"
+//
+//        attribute "runTime", "number"
+//        attribute "runTimeDisplay", "string"
+//        attribute "remainingTime", "number"
+//        attribute "remainingTimeDisplay", "string"
+//        attribute "delayTime", "number"
+//        attribute "delayTimeDisplay", "string"
+//        attribute "finishTimeDisplay", "string"
+//        attribute "currentState", "string"
+//        attribute "error", "string"
+//        attribute "course", "string"
+//        attribute "smartCourse", "string"
+//        attribute "steam", "string"
+//        attribute "highTemp", "string"
+//        attribute "extraDry", "string"
+//        attribute "halfLoad", "string"
+//        attribute "dualZone", "string"
+//        attribute "nightDry", "string"
+//    }
+//
+//    preferences {
+//      section { // General
+//        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
+//        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
+//      }
+//    }
+//}
 
 def uninstalled() {
     logger("debug", "uninstalled()")
@@ -153,7 +154,7 @@ def processStateData(data) {
     if (parent.checkValue(data,'Remain_Time_M')) {
       remainingTime += (data["Remain_Time_M"]*60)
     }
- 
+
     remainingTimeDisplay = parent.convertSecondsToTime(remainingTime)
 
     Date currentTime = new Date()
@@ -216,17 +217,17 @@ def processStateData(data) {
     if (parent.checkValue(data,'SmartCourse'))
         sendEvent(name: "smartCourse", value: data["SmartCourse"] != 0 ? data["SmartCourse"]?.toLowerCase() : "none")
 
-    if (parent.checkValue(data,'Steam')) 
+    if (parent.checkValue(data,'Steam'))
       sendEvent(name: "steam", value:  parent.cleanEnumValue(data["Steam"], "@CP_"))
-    if (parent.checkValue(data,'HighTemp')) 
+    if (parent.checkValue(data,'HighTemp'))
       sendEvent(name: "highTemp", value:  parent.cleanEnumValue(data["HighTemp"], "@CP_"))
-    if (parent.checkValue(data,'ExtraDry')) 
+    if (parent.checkValue(data,'ExtraDry'))
       sendEvent(name: "extraDry", value:  parent.cleanEnumValue(data["ExtraDry"], "@CP_"))
-    if (parent.checkValue(data,'HalfLoad')) 
+    if (parent.checkValue(data,'HalfLoad'))
       sendEvent(name: "halfLoad", value:  parent.cleanEnumValue(parent.cleanEnumValue(data["ExtraDry"], "@CP_"),"@DW_OPTION_"))
-    if (parent.checkValue(data,'DualZone')) 
+    if (parent.checkValue(data,'DualZone'))
       sendEvent(name: "dualZone", value:  parent.cleanEnumValue(data["DualZone"], "@CP_"))          
-    if (parent.checkValue(data,'NightDry')) 
+    if (parent.checkValue(data,'NightDry'))
       sendEvent(name: "nightDry", value:  parent.cleanEnumValue(data["NightDry"], "@CP_"))   
 }
 
@@ -245,4 +246,5 @@ private logger(level, msg) {
       log."${level}" "${device.displayName} ${msg}"
     }
   }
+}
 }

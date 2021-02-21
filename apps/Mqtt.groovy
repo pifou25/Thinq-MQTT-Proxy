@@ -29,6 +29,9 @@ class Mqtt {
         client.disconnect()
     }
 
+    /*
+    Using snippet from https://gist.github.com/jimrok/d25cb45b840f5a4ad700
+     */
     void connect(LinkedHashMap<String, Object> map, Object serverUrl, Object clientId, def o3, def o4) {
         client = new MqttClient(serverUrl, clientId)
         MqttConnectOptions options = new MqttConnectOptions()

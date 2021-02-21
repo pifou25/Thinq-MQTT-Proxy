@@ -1375,18 +1375,15 @@ Device getChildDevice(String deviceNetworkId) {
 	return devices[deviceNetworkId]
 }
 
-Device addChildDevice(String s1, def driverName, String deviceNetworkId, int id, def meta) {
-	Device device = new Device()
-	device.setDeviceNetworkId(deviceNetworkId)
-	device.meta = meta
-	devices[deviceNetworkId] = device
-	device.driver = driverName
-	driverName.device = device
+Device addChildDevice(String s1, Device driverName, String deviceNetworkId, int id, def meta) {
+	driverName.setDeviceNetworkId(deviceNetworkId)
+	driverName.meta = meta
+	devices[deviceNetworkId] = driverName
 	driverName.interfaces = interfaces
 	driverName.log = log
 	driverName.logLevel = logLevel
 	driverName.parent = this
-	return device
+	return driverName
 }
 
 void schedule(String cron, Boolean refreshV1Devices) {

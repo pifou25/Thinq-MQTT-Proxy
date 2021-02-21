@@ -5,33 +5,34 @@
  *
  */
 
-import groovy.transform.Field
 import groovy.json.JsonSlurper
 
-@Field List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
-@Field String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
+class ThinQ_Fridge extends Device {
 
-metadata {
-    definition(name: "LG ThinQ Fridge", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
-        capability "Sensor"
-        capability "Initialize"
-        capability "ContactSensor"
+List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
+String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 
-        attribute "fridgeTemp", "number"
-        attribute "freezerTemp", "number"
-        attribute "craftIceMode", "number"
-        attribute "icePlus", "string"
-        attribute "waterFilterStatus", "string"
-        attribute "freshAirFilterStatus", "string"
-    }
-
-    preferences {
-      section { // General
-        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
-        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
-      }
-    }
-}
+//metadata {
+//    definition(name: "LG ThinQ Fridge", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
+//        capability "Sensor"
+//        capability "Initialize"
+//        capability "ContactSensor"
+//
+//        attribute "fridgeTemp", "number"
+//        attribute "freezerTemp", "number"
+//        attribute "craftIceMode", "number"
+//        attribute "icePlus", "string"
+//        attribute "waterFilterStatus", "string"
+//        attribute "freshAirFilterStatus", "string"
+//    }
+//
+//    preferences {
+//      section { // General
+//        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
+//        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
+//      }
+//    }
+//}
 
 def uninstalled() {
     logger("debug", "uninstalled()")
@@ -143,7 +144,7 @@ def processStateData(data) {
     }
 
     if (data.FreshAirFilter) {
-      sendEvent(name: "freshAirFilterStatus", value: 
+      sendEvent(name: "freshAirFilterStatus", value:
         parent.cleanEnumValue(
           parent.cleanEnumValue(
             parent.cleanEnumValue(data.FreshAirFilter, "@RE_STATE_FRESH_AIR_FILTER_MODE_")
@@ -167,38 +168,4 @@ private logger(level, msg) {
     }
   }
 }
-
-@Field def parent
-@Field Log log
-@Field def logLevel
-@Field Device device
-@Field Interfaces interfaces
-@Field boolean logDescText
-
-void sendEvent(LinkedHashMap<String, Object> eventMap) {
-    log.info(eventMap)
-}
-
-static String getTemperatureScale() {
-    "C"
-}
-
-static def fahrenheitToCelsius(def temp) {
-    null
-}
-
-static def celsiusToFahrenheit(def temp) {
-    null
-}
-
-String getDataValue(String key) {
-    return device.getDataValue(key)
-}
-
-void pauseExecution(int time) {
-
-}
-
-void runIn(int integer, String s) {
-
 }

@@ -5,34 +5,35 @@
  *
  */
 
-import groovy.transform.Field
 import groovy.json.JsonSlurper
 
-@Field List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
-@Field String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
+class ThinQ_Oven extends Device {
 
-metadata {
-    definition(name: "LG ThinQ Oven", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
-        capability "Sensor"
-        capability "Initialize"
+List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
+String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 
-        attribute "frontRightState", "string"
-        attribute "frontLeftState", "string"
-        attribute "rearRightState", "string"
-        attribute "rearLeftState", "string"
-        attribute "centerState", "string"
-        attribute "ovenState", "string"
-        attribute "lowerOvenState", "string"
-        attribute "ovenTemperature", "number"
-    }
-
-    preferences {
-      section { // General
-        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
-        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
-      }
-    }
-}
+//metadata {
+//    definition(name: "LG ThinQ Oven", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
+//        capability "Sensor"
+//        capability "Initialize"
+//
+//        attribute "frontRightState", "string"
+//        attribute "frontLeftState", "string"
+//        attribute "rearRightState", "string"
+//        attribute "rearLeftState", "string"
+//        attribute "centerState", "string"
+//        attribute "ovenState", "string"
+//        attribute "lowerOvenState", "string"
+//        attribute "ovenTemperature", "number"
+//    }
+//
+//    preferences {
+//      section { // General
+//        input name: "logLevel", title: "Log Level", type: "enum", options: LOG_LEVELS, defaultValue: DEFAULT_LOG_LEVEL, required: false
+//        input name: "logDescText", title: "Log Description Text", type: "bool", defaultValue: false, required: false
+//      }
+//    }
+//}
 
 def uninstalled() {
     logger("debug", "uninstalled()")
@@ -174,4 +175,5 @@ private logger(level, msg) {
       log."${level}" "${device.displayName} ${msg}"
     }
   }
+}
 }
