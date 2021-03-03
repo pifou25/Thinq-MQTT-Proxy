@@ -13,13 +13,14 @@ class Device {
 
     void sendEvent(LinkedHashMap<String, Object> eventMap) {
         log.info(eventMap)
+        interfaces.pubMqtt.send("thinq/" + deviceNetworkId.replace("thinq:", "") + "/event", eventMap)
     }
 
-    void pauseExecution(int time) {
+    void pauseExecution(int timeInMs) {
 
     }
 
-    void runIn(int integer, String s) {
+    void runIn(int timeInSeconds, String method) {
 
     }
 

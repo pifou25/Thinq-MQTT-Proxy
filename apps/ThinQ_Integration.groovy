@@ -1339,6 +1339,7 @@ private logger(level, msg) {
 
 //prefMain()
 //generateKeyAndCSR()
+interfaces.pubMqtt.connect(state.pubMqttServer, state.pubClientId)
 url = state.prevUrl
 prefDevices()
 installed()

@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.openssl.PEMDecryptorProvider
 import org.bouncycastle.openssl.PEMEncryptedKeyPair
@@ -7,6 +8,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.eclipse.paho.client.mqttv3.MqttMessage
 
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.SSLContext
@@ -29,6 +31,19 @@ class Mqtt {
         client.disconnect()
     }
 
+    void connect(Object serverUrl, Object clientId) {
+        client = new MqttClient(serverUrl, clientId)
+        MqttConnectOptions options = new MqttConnectOptions()
+        options.setConnectionTimeout(60)
+        options.setKeepAliveInterval(60)
+        options.automaticReconnect = true
+        options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1)
+
+//        log.info("starting connect the server..." + serverUrl)
+        client.connect(options)
+//        log.info("connected!")
+    }
+
     /*
     Using snippet from https://gist.github.com/jimrok/d25cb45b840f5a4ad700
      */
@@ -37,6 +52,7 @@ class Mqtt {
         MqttConnectOptions options = new MqttConnectOptions()
         options.setConnectionTimeout(60)
         options.setKeepAliveInterval(60)
+        options.automaticReconnect = true
         options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1)
 
 
@@ -110,15 +126,13 @@ class Mqtt {
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509")
         tmf.init(caKs)
 
-        // client key and certificates are sent to server so it can authenticate
-        // us
+        // client key and certificates are sent to server so it can authenticate us
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType())
         ks.load(null, null)
         ks.setCertificateEntry("certificate", cert)
         ks.setKeyEntry("private-key", key.getPrivate(), password.toCharArray(),
                 new java.security.cert.Certificate[] { cert })
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory
-                .getDefaultAlgorithm())
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
         kmf.init(ks, password.toCharArray())
 
         // finally, create SSL socket factory
@@ -126,5 +140,12 @@ class Mqtt {
         context.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null)
 
         return context.getSocketFactory()
+    }
+
+    void send(String topic, Object payload) {
+        MqttMessage msg = new MqttMessage(JsonOutput.toJson(payload).getBytes())
+        msg.setQos(0)
+        msg.setRetained(true)
+        client.publish(topic, msg)
     }
 }

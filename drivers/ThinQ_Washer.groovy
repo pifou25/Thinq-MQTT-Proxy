@@ -95,7 +95,7 @@ def mqttConnectUntilSuccessful() {
 def parse(message) {
     def topic = interfaces.mqtt.parseMessage(message)
     def payload = new JsonSlurper().parseText(topic.payload)
-    logger("trace", "parse(${payload})")
+    logger("info", "parse(${payload})")
 
     parent.processMqttMessage(this, payload)
 }
