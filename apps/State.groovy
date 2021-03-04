@@ -29,6 +29,8 @@ class State {
     def csr
     String oauth_url
     def jsession
+    def region
+    def certSource
 
     void save(String fileName) {
         def json = JsonOutput.toJson(this)

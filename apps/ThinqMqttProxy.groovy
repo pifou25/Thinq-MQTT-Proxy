@@ -27,14 +27,17 @@ class ThinqMqttProxy {
     }
 
     static void doInit() {
-
+        def integration = new ThinQ_Integration()
+        integration.prefMain()
+        integration.generateKeyAndCSR()
+        integration.state.save(integration.STATE_FILE)
     }
 
     static void doRun() {
         def integration = new ThinQ_Integration()
         integration.interfaces.pubMqtt.connect(integration.state.pubMqttServer, integration.state.pubClientId)
-        integration.url = integration.state.prevUrl
         integration.prefDevices()
+        integration.state.save(integration.STATE_FILE)
         println "Devices identified..."
         integration.installed()
         integration.state.save(integration.STATE_FILE)

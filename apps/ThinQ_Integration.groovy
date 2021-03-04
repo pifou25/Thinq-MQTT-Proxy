@@ -201,7 +201,6 @@ def prefMain() {
 			state.mqttServer = mqttResult.mqttServer
 	}
 
-	state.save(STATE_FILE)
 //	return dynamicPage(name: "prefMain", title: "LG ThinQ OAuth", nextPage: "prefCert", uninstall:false, install: false) {
 //		section {
 			state.prevUrl = url
@@ -218,11 +217,11 @@ def prefMain() {
 //				paragraph "When you click the link below a popup will open to allow you to login to your LG account. After you login, the popup will go blank. At that point, copy the URL from that popup, close the popup and wait for this screen to reload. At that point, paste the URL into the box below and click Next."
 //				href url: oauthInitialize(), style: "external", required: true, title: "LG ThinQ Account Authorization", description: desc
 				println(oauthInitialize())
-				url = System.console().readLine("Enter the URL you are redirected to after logging in")
-//				input "url", "text", title: "Enter the URL you are redirected to after logging in"
+				println "Enter the URL you are redirected to after logging in"
+				url = System.in.newReader().readLine()
+				state.prevUrl = url
 //			}
 //		}
-				state.save(STATE_FILE)
 	}
 }
 
@@ -247,7 +246,7 @@ def prefDevices() {
 	if (certSource == "Use Cloud Service") {
 		generateKeyAndCSR()
 	}
-	if (url != state.prevUrl) {
+	if (state.access_token == null && url != state.prevUrl) {
 url = state.prevUrl
 		def oauthDetails = getOAuthDetailsFromUrl()
 		state.oauth_url = oauthDetails.url[0..-2]
@@ -259,7 +258,6 @@ url = state.prevUrl
 		state.user_number = oauthDetails.user_number
 		state.access_token = result.access_token
 		state.refresh_token = result.refresh_token
-state.save(STATE_FILE)
 	}
 
 	register()
@@ -284,7 +282,6 @@ state.save(STATE_FILE)
 		state.foundDevices << [id: it.deviceId, name: it.alias, type: it.deviceType, version: it.platformType, modelJson: getModelJson(it.modelJsonUri)]
 	}
 
-	state.save(STATE_FILE)
 	thinqDevices = deviceList
 //	return dynamicPage(name: "prefDevices", title: "LG ThinQ OAuth",  uninstall:false, install: true) {
 //		section {
@@ -294,6 +291,7 @@ state.save(STATE_FILE)
 }
 
 def returnErrorPage(message, nextPage) { //TODO
+	logger("warn", message)
 		return dynamicPage(name: "prefError", title: "Error Occurred",  nextPage: nextPage, uninstall:false, install: false) {
 		section {
 			paragraph message
@@ -1337,19 +1335,12 @@ private logger(level, msg) {
 	}
 }
 
-//prefMain()
-//generateKeyAndCSR()
-
-
 @Field State state = State.load(STATE_FILE)
 @Field def logLevel = 3
-@Field def region = "pl-PL"
+@Field def region = state.region
 @Field def url
-@Field
-static String STATE_FILE = "c:/dev/state.json"
-@Field
-String certSource = "Use Cloud Service"
-
+@Field static String STATE_FILE = "c:/dev/state.json"
+@Field String certSource = state.certSource
 @Field Log log = new Log()
 @Field App app = new App()
 @Field Interfaces interfaces = new Interfaces()

@@ -1,0 +1,8 @@
+{
+    "region": "pl-PL",
+    "countryCode": "PL",
+    "pubMqttServer": "tcp://mqtt-server.lan:1883",
+    "langCode": "pl-PL",
+    "certSource": "Use Cloud Service",
+    "pubClientId": "thinq"
+}
