@@ -1,3 +1,6 @@
+/*
+ *  Copyright 2021 Michał Wójcik
+ */
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 

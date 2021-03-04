@@ -1,3 +1,6 @@
+/*
+ *  Copyright 2021 Michał Wójcik
+ */
 class Device {
     def deviceNetworkId
     def meta = [:]

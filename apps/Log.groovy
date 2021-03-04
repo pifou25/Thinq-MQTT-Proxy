@@ -1,3 +1,6 @@
+/*
+ *  Copyright 2021 Michał Wójcik
+ */
 class Log {
     void error(Object message) {
         println(message.toString())
