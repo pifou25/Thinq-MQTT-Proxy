@@ -1339,11 +1339,6 @@ private logger(level, msg) {
 
 //prefMain()
 //generateKeyAndCSR()
-interfaces.pubMqtt.connect(state.pubMqttServer, state.pubClientId)
-url = state.prevUrl
-prefDevices()
-installed()
-state.save(STATE_FILE)
 
 
 @Field State state = State.load(STATE_FILE)
