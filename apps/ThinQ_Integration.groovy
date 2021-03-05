@@ -1339,7 +1339,7 @@ private logger(level, msg) {
 @Field def logLevel = 3
 @Field def region = state.region
 @Field def url
-@Field static String STATE_FILE = "c:/dev/state.json"
+@Field static String STATE_FILE = "state.json"
 @Field String certSource = state.certSource
 @Field Log log = new Log()
 @Field App app = new App()
