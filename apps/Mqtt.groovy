@@ -34,7 +34,7 @@ class Mqtt {
         client.disconnect()
     }
 
-    void connect(Object serverUrl, Object clientId) {
+    void connect(Object serverUrl, Object clientId, String userName, String password) {
         client = new MqttClient(serverUrl, clientId)
         MqttConnectOptions options = new MqttConnectOptions()
         options.setConnectionTimeout(60)
@@ -42,6 +42,10 @@ class Mqtt {
         options.automaticReconnect = true
         options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1)
 
+        if (userName && password) {
+            options.setUserName(userName)
+            options.setPassword(password.toCharArray())
+        }
 //        log.info("starting connect the server..." + serverUrl)
         client.connect(options)
 //        log.info("connected!")

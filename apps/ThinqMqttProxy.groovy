@@ -35,7 +35,8 @@ class ThinqMqttProxy {
 
     static void doRun() {
         def integration = new ThinQ_Integration()
-        integration.interfaces.pubMqtt.connect(integration.state.pubMqttServer, integration.state.pubClientId)
+        integration.interfaces.pubMqtt.connect(integration.state.pubMqttServer, integration.state.pubClientId,
+                integration.state.pubUserName, integration.state.pubPassword)
         integration.prefDevices()
         integration.state.save(integration.STATE_FILE)
         println "Devices identified..."

@@ -31,6 +31,8 @@ class State {
     def jsession
     def region
     def certSource
+    def pubUserName
+    def pubPassword
 
     void save(String fileName) {
         def json = JsonOutput.toJson(this)

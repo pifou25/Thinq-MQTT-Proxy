@@ -51,3 +51,7 @@ java -jar ./target/thinq-mqtt-proxy.jar run
 * As I have only `v2` devices, I have not corrected the code to handle `v1` ones. Original code is written to handle them, so adding support should be doable.
 * I have tested only washer and fridge, because I don't have more Thinq enabled devices. There might be some fixes necessary for other devices.
 * This application is a hobby project for other hobbyists, provided as-is. I am not responsible for any issues caused by its use.
+
+## Discussion
+
+https://community.openhab.org/t/lg-smart-thinq/38818
