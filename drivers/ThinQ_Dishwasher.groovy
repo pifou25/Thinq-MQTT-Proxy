@@ -81,7 +81,7 @@ def mqttConnectUntilSuccessful() {
                             ignoreSSLIssues: true)
     pauseExecution(3000)
     for (sub in mqtt.subscriptions) {
-        interfaces.mqtt.subscribe(sub, 0)
+        interfaces.mqtt.subscribe(sub, 0, this)
     }
     return true
   }
