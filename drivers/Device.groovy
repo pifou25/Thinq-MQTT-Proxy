@@ -16,7 +16,7 @@ class Device {
 
     void sendEvent(LinkedHashMap<String, Object> eventMap) {
         log.info(eventMap)
-        interfaces.pubMqtt.send("thinq/" + deviceNetworkId.replace("thinq:", "") + "/event", eventMap)
+        interfaces.pubMqtt.send("thinq/" + deviceNetworkId.replace("thinq:", "") + "/event/" + eventMap.name, eventMap.value)
     }
 
     void pauseExecution(int timeInMs) {
@@ -24,7 +24,9 @@ class Device {
     }
 
     void runIn(int timeInSeconds, String method) {
-
+        log.info("Sleeping for $timeInSeconds before calling $method")
+        sleep(timeInSeconds * 1000)
+        "${method}"()
     }
 
     void updateDataValue(String key, String value) {
