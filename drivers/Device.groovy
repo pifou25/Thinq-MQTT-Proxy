@@ -5,7 +5,7 @@ class Device {
     def deviceNetworkId
     def meta = [:]
     def displayName = "TODO"
-
+    def friendlyName
     def parent
     Log log
     def logLevel
@@ -16,7 +16,7 @@ class Device {
 
     void sendEvent(LinkedHashMap<String, Object> eventMap) {
         log.info(eventMap)
-        interfaces.pubMqtt.send("thinq/" + deviceNetworkId.replace("thinq:", "") + "/event/" + eventMap.name, eventMap.value)
+        interfaces.pubMqtt.send("thinq/" + friendlyName + "/event/" + eventMap.name, eventMap.value)
     }
 
     void pauseExecution(int timeInMs) {

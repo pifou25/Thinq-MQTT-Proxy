@@ -1370,6 +1370,8 @@ Device addChildDevice(String s1, Device driverName, String deviceNetworkId, int 
 	driverName.log = log
 	driverName.logLevel = logLevel
 	driverName.parent = this
+	def deviceId = deviceNetworkId.replace("thinq:", "")
+	driverName.friendlyName = state.friendlyNames.getOrDefault(deviceId, deviceId)
 	return driverName
 }
 

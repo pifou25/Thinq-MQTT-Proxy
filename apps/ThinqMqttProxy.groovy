@@ -38,6 +38,7 @@ class ThinqMqttProxy {
         integration.interfaces.pubMqtt.connect(integration.state.pubMqttServer, integration.state.pubClientId,
                 integration.state.pubUserName, integration.state.pubPassword)
         integration.prefDevices()
+        initializeFriendlyNames(integration)
         integration.state.save(integration.STATE_FILE)
         println "Devices identified..."
         integration.installed()
@@ -45,5 +46,13 @@ class ThinqMqttProxy {
         System.in.read()
 
         // TODO Shutdown
+    }
+
+    private static void initializeFriendlyNames(ThinQ_Integration integration) {
+        integration.state.foundDevices.forEach(device -> {
+            if (!integration.state.friendlyNames.get(device.id)) {
+                integration.state.friendlyNames[device.id] = device.name.toLowerCase()
+            }
+        })
     }
 }

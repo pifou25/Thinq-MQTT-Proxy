@@ -33,6 +33,7 @@ class State {
     def certSource
     def pubUserName
     def pubPassword
+    def friendlyNames = [:]
 
     void save(String fileName) {
         def json = JsonOutput.toJson(this)
