@@ -16,6 +16,9 @@ class Device {
     boolean logDescText
     def location = [timeZone: TimeZone.default]
 
+    List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
+    String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
+
     def uninstalled() {
         logger("debug", "uninstalled()")
         parent.stopRTIMonitoring(device)

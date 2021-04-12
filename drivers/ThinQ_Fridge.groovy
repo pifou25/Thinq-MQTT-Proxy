@@ -4,13 +4,7 @@
  *  Copyright 2020 Dominick Meglio
  *
  */
-
-import groovy.json.JsonSlurper
-
 class ThinQ_Fridge extends Device {
-
-List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
-String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 
 //metadata {
 //    definition(name: "LG ThinQ Fridge", namespace: "dcm.thinq", author: "dmeglio@gmail.com") {
