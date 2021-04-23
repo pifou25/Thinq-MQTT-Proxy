@@ -33,11 +33,10 @@
         </dependency>
         <!-- mqtt client-->
         <dependency>
-            <groupId>org.eclipse.paho</groupId>
-            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>1.2.5</version>
+            <groupId>com.hivemq</groupId>
+            <artifactId>hivemq-mqtt-client</artifactId>
+            <version>1.2.2</version>
         </dependency>
-
         <!--  ssl support  -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
