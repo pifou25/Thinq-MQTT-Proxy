@@ -7,6 +7,11 @@ This application can connect to LG Thinq infrastructure and register for the upd
 This application is based on the code written by `dcmeglio` at https://github.com/dcmeglio/hubitat-thinq .
 He made a great job by finding all the details necessary to connect to the LG's MQTT servers and register for the messages coming from the LG's appliances.
 
+I have asked him if he doesn't have any objection with adaptation of his work and renaming the project to “Thinq MQTT Proxy”. 
+His answer was
+> No objections at all. Good luck!
+
+
 My goal was to keep the code as close to the original one, to make any updates with upstream easier.
 I have implemented a thin layer which is providing necessary infrastructure for this code to work as standalone application.
 
