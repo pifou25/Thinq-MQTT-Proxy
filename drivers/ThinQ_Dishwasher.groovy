@@ -1,9 +1,12 @@
+import groovy.util.logging.Slf4j
+
 /**
  *  LG Dishwasher
  *
  *  Copyright 2020 Dominick Meglio
  *
  */
+@Slf4j
 class ThinQ_Dishwasher extends Device {
 
 //metadata {

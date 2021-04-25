@@ -1,9 +1,12 @@
+import groovy.util.logging.Slf4j
+
 /*
  *  Copyright 2021 Michał Wójcik
  */
+@Slf4j
 class ThinqMqttProxy {
     static void main(String[] args) {
-        println "Starting Thinq Mqtt Proxy..."
+        log.info "Starting Thinq Mqtt Proxy..."
 
         if (args.length != 1) {
             printHelp()
@@ -40,7 +43,7 @@ class ThinqMqttProxy {
         integration.prefDevices()
         initializeFriendlyNames(integration)
         integration.state.save(integration.STATE_FILE)
-        println "Devices identified..."
+        log.info "Devices identified..."
         integration.installed()
         integration.state.save(integration.STATE_FILE)
         System.in.read()

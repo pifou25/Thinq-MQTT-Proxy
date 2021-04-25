@@ -1,23 +1,20 @@
 import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 
 /*
  *  Copyright 2021 Michał Wójcik
  */
+@Slf4j
 class Device {
     def deviceNetworkId
     def meta = [:]
     def displayName = "TODO"
     def friendlyName
     def parent
-    Log log
-    def logLevel
     Device device = this
     Interfaces interfaces
     boolean logDescText
     def location = [timeZone: TimeZone.default]
-
-    List<String> LOG_LEVELS = ["error", "warn", "info", "debug", "trace"]
-    String DEFAULT_LOG_LEVEL = LOG_LEVELS[2]
 
     def uninstalled() {
         logger("debug", "uninstalled()")
@@ -94,20 +91,11 @@ class Device {
      * @param msg Message to log
      */
     def logger(level, msg) {
-        if (level && msg) {
-            Integer levelIdx = LOG_LEVELS.indexOf(level)
-            Integer setLevelIdx = LOG_LEVELS.indexOf(logLevel)
-            if (setLevelIdx < 0) {
-                setLevelIdx = LOG_LEVELS.indexOf(DEFAULT_LOG_LEVEL)
-            }
-            if (levelIdx <= setLevelIdx) {
-                log."${level}" "${device.displayName} ${msg}"
-            }
-        }
+        log."${level}" "${device.displayName} ${msg}"
     }
 
     void sendEvent(LinkedHashMap<String, Object> eventMap) {
-        log.info(eventMap)
+        log.info("{}", eventMap)
         interfaces.pubMqtt.send("thinq/" + friendlyName + "/event/" + eventMap.name, eventMap.value)
     }
 

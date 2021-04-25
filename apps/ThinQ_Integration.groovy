@@ -12,6 +12,9 @@
  */
 
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -371,7 +374,7 @@ def initialize() {
 
 def getDeviceSnapshot(devDetails, child) {
 	def data = lgAPIGet("${state.thinqUrl}/service/devices/${devDetails.id}")
-	log.debug data
+	log.debug("{}", data)
 	if (data?.snapshot != null) {
 		def dataNode = findMQTTDataNode(devDetails.modelJson, data.snapshot)
 		def targetKeys = getTargetKeys(devDetails.modelJson.MonitoringValue)
@@ -1323,25 +1326,15 @@ def generateKeyAndCSR() {
 * @param msg Message to log
 */
 private logger(level, msg) {
-	if (level && msg) {
-		Integer levelIdx = LOG_LEVELS.indexOf(level)
-		Integer setLevelIdx = LOG_LEVELS.indexOf(logLevel)
-		if (setLevelIdx < 0) {
-			setLevelIdx = LOG_LEVELS.indexOf(DEFAULT_LOG_LEVEL)
-		}
-		if (levelIdx <= setLevelIdx) {
-			log."${level}" "${app.name} ${msg}"
-		}
-	}
+	log."${level}" "${app.name} ${msg}"
 }
 
 @Field State state = State.load(STATE_FILE)
-@Field def logLevel = 3
 @Field def region = state.region
 @Field def url
 @Field static String STATE_FILE = "state.json"
 @Field String certSource = state.certSource
-@Field Log log = new Log()
+@Field private static final Logger log = LoggerFactory.getLogger(ThinQ_Integration.class)
 @Field App app = new App()
 @Field Interfaces interfaces = new Interfaces()
 @Field Object csr
@@ -1367,11 +1360,10 @@ Device addChildDevice(String s1, Device driverName, String deviceNetworkId, int 
 	driverName.meta = meta
 	devices[deviceNetworkId] = driverName
 	driverName.interfaces = interfaces
-	driverName.log = log
-	driverName.logLevel = logLevel
 	driverName.parent = this
 	def deviceId = deviceNetworkId.replace("thinq:", "")
 	driverName.friendlyName = state.friendlyNames.getOrDefault(deviceId, deviceId)
+	driverName.displayName = state.friendlyNames.getOrDefault(deviceId, deviceId)
 	return driverName
 }
 

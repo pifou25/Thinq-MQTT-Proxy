@@ -8,6 +8,7 @@ import com.hivemq.client.mqtt.MqttClientState
 import com.hivemq.client.mqtt.datatypes.MqttQos
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient
 import groovy.json.JsonOutput
+import groovy.util.logging.Slf4j
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.bouncycastle.openssl.PEMDecryptorProvider
 import org.bouncycastle.openssl.PEMEncryptedKeyPair
@@ -25,6 +26,7 @@ import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 
+@Slf4j
 class Mqtt {
     Mqtt3AsyncClient client
 
@@ -46,11 +48,13 @@ class Mqtt {
                 .automaticReconnectWithDefaultConfig()
                 .buildAsync()
 
+        log.info("starting connection the server {}...", serverUrl)
         if (userName && password) {
             client.connectWith().simpleAuth().username(userName).password(password.getBytes()).applySimpleAuth()
         } else {
             client.connect()
         }
+        log.info("connected!")
     }
 
     /*
@@ -71,9 +75,9 @@ class Mqtt {
                 .buildAsync()
 
 
-//        log.info("starting connect the server..." + serverUrl)
+        log.info("starting connection the server {}...", serverUrl)
         client.connect()
-//        log.info("connected!")
+        log.info("connected!")
     }
 
     void subscribe(String sub, int qos, def driver) {
@@ -85,6 +89,7 @@ class Mqtt {
     }
 
     Object parseMessage(Object o) {
+        log.info("Parsing received message: {}", o)
         def result = [:]
         result.payload = o.toString()
         return result
@@ -122,7 +127,7 @@ class Mqtt {
         while (bis.available() > 0) {
             cert = (X509Certificate) cf.generateCertificate(bis)
         }
-        cert
+        return cert
     }
 
     private static X509Certificate getCaCert(String caCrtFile, CertificateFactory cf) {
@@ -133,7 +138,7 @@ class Mqtt {
         while (bis.available() > 0) {
             caCert = (X509Certificate) cf.generateCertificate(bis)
         }
-        caCert
+        return caCert
     }
 
     private static KeyPair getKey(String keyFile, String password) {
@@ -143,15 +148,15 @@ class Mqtt {
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC")
         KeyPair key
         if (object instanceof PEMEncryptedKeyPair) {
-            System.out.println("Encrypted key - we will use provided password")
+            log.info("Encrypted key - we will use provided password")
             key = converter.getKeyPair(((PEMEncryptedKeyPair) object)
                     .decryptKeyPair(decProv))
         } else {
-            System.out.println("Unencrypted key - no password needed")
+            log.info("Unencrypted key - no password needed")
             key = converter.getKeyPair((PEMKeyPair) object)
         }
         pemParser.close()
-        key
+        return key
     }
 
     private static KeyManagerFactory getKeyManagerFactory(X509Certificate cert, KeyPair key, String password) {
@@ -162,7 +167,7 @@ class Mqtt {
                 new Certificate[]{cert})
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
         kmf.init(ks, password.toCharArray())
-        kmf
+        return kmf
     }
 
     private static TrustManagerFactory getTrustManagerFactory(X509Certificate caCert) {
@@ -171,15 +176,17 @@ class Mqtt {
         caKs.setCertificateEntry("ca-certificate", caCert)
         TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509")
         tmf.init(caKs)
-        tmf
+        return tmf
     }
 
     void send(String topic, Object payload) {
+        def json = JsonOutput.toJson(payload)
+        log.info("Sending to topic {} message {}", topic, json)
         client.publishWith()
                 .topic(topic)
                 .qos(MqttQos.AT_MOST_ONCE)
                 .retain(true)
-                .payload(JsonOutput.toJson(payload).getBytes())
+                .payload(json.getBytes())
                 .send()
     }
 }

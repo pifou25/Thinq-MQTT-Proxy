@@ -1,9 +1,12 @@
+import groovy.util.logging.Slf4j
+
 /**
  *  LG Fridge
  *
  *  Copyright 2020 Dominick Meglio
  *
  */
+@Slf4j
 class ThinQ_Fridge extends Device {
 
 //metadata {

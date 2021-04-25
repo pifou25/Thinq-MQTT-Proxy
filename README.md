@@ -37,10 +37,10 @@ java -jar ./target/thinq-mqtt-proxy.jar run
 
 ## Items to do
 
-1. [ ] MQTT reconnects
+1. [x] MQTT reconnects
 1. [ ] Error handling   
 1. [ ] Easier setup
-1. [ ] Better format of the messages after conversion
+1. [x] Better format of the messages after conversion
 1. [ ] Provide documentation on how to run it as service
 1. [x] Friendly names for the MQTT topic (i.e. `washer` instead of long id string) 
   
@@ -48,6 +48,7 @@ java -jar ./target/thinq-mqtt-proxy.jar run
    This name is persisted into the configuration file and can be modified if different name is needed.
 1. [ ] Code cleanup and hardening
 1. [ ] Tests
+1. [x] Better logging
 
 ## Disclaimer
 
