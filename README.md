@@ -36,17 +36,32 @@ java -jar ./target/thinq-mqtt-proxy.jar init
 
 ## Running
 
-```
+### For the first time
+
+Check if application works correctly when running it from command line
+```shell
 java -jar ./target/thinq-mqtt-proxy.jar run
+```
+
+### As a service
+
+If previous step was successful, run 
+```shell
+sudo ./install.sh
+```
+
+It should create and start `thinq-mqtt-proxy` service. You can verify if works correctly by inspecting `thinq-mqtt-proxy.log` or by issuing command
+```shell
+sudo systemctl status thinq-mqtt-proxy.service
 ```
 
 ## Items to do
 
 1. [x] MQTT reconnects
 1. [ ] Error handling   
-1. [ ] Easier setup
+1. [x] Easier setup
 1. [x] Better format of the messages after conversion
-1. [ ] Provide documentation on how to run it as service
+1. [x] Provide documentation on how to run it as service
 1. [x] Friendly names for the MQTT topic (i.e. `washer` instead of long id string) 
   
    Instead of using cryptic uuid of the device as the topic name, by default is it generated from the device type in lower case (ie. "refrigerator"). 

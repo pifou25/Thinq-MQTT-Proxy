@@ -46,9 +46,9 @@ class ThinqMqttProxy {
         log.info "Devices identified..."
         integration.installed()
         integration.state.save(integration.STATE_FILE)
-        System.in.read()
-
-        // TODO Shutdown
+        log.info "Waiting forever..."
+        Thread.currentThread().join()
+        log.info "Shut down..."
     }
 
     private static void initializeFriendlyNames(ThinQ_Integration integration) {
