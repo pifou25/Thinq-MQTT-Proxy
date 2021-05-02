@@ -45,43 +45,51 @@ class ThinQ_Washer extends Device {
 def processStateData(data) {
     logger("debug", "processStateData(${data})")
 
-    def runTime = 0
-    def runTimeDisplay = '00:00'
-    def remainingTime = 0
-    def remainingTimeDisplay = '00:00'
-    def delayTime = 0
-    def delayTimeDisplay = '00:00'
-    def error
+    if (parent.checkValue(data,'Initial_Time_H') || parent.checkValue(data,'Initial_Time_M')) {
+        def runTime = 0
+        if (parent.checkValue(data, 'Initial_Time_H')) {
+            runTime += (data["Initial_Time_H"] * 60 * 60)
+        }
+        if (parent.checkValue(data, 'Initial_Time_M')) {
+            runTime += (data["Initial_Time_M"] * 60)
+        }
+        def runTimeDisplay = parent.convertSecondsToTime(runTime)
+        sendEvent(name: "runTime", value: runTime, unit: "seconds")
+        sendEvent(name: "runTimeDisplay", value: runTimeDisplay, unit: "hh:mm")
+    }
 
-    if (parent.checkValue(data,'Initial_Time_H')) {
-      runTime += (data["Initial_Time_H"]*60*60)
-    }
-    if (parent.checkValue(data,'Initial_Time_M')) {
-      runTime += (data["Initial_Time_M"]*60)
-    }
-    runTimeDisplay = parent.convertSecondsToTime(runTime)
+    if (parent.checkValue(data,'Remain_Time_H') || parent.checkValue(data,'Remain_Time_M')) {
+        def remainingTime = 0
+        if (parent.checkValue(data, 'Remain_Time_H')) {
+            remainingTime += (data["Remain_Time_H"] * 60 * 60)
+        }
+        if (parent.checkValue(data, 'Remain_Time_M')) {
+            remainingTime += (data["Remain_Time_M"] * 60)
+        }
+        def remainingTimeDisplay = parent.convertSecondsToTime(remainingTime)
 
-    if (parent.checkValue(data,'Remain_Time_H')) {
-      remainingTime += (data["Remain_Time_H"]*60*60)
+        Date currentTime = new Date()
+        use(groovy.time.TimeCategory) {
+            currentTime = currentTime + (remainingTime as int).seconds
+        }
+        def finishTimeDisplay = currentTime.format("yyyy-MM-dd'T'HH:mm:ssZ", location.timeZone)
+        sendEvent(name: "remainingTime", value: remainingTime, unit: "seconds")
+        sendEvent(name: "remainingTimeDisplay", value: remainingTimeDisplay, unit: "hh:mm")
+        sendEvent(name: "finishTimeDisplay", value: finishTimeDisplay, unit: "hh:mm")
     }
-    if (parent.checkValue(data,'Remain_Time_M')) {
-      remainingTime += (data["Remain_Time_M"]*60)
-    }
-    remainingTimeDisplay = parent.convertSecondsToTime(remainingTime)
 
-    Date currentTime = new Date()
-    use(groovy.time.TimeCategory) {
-      currentTime = currentTime + (remainingTime as int).seconds
+    if (parent.checkValue(data,'Reserve_Time_H') || parent.checkValue(data,'Reserve_Time_M')) {
+        def delayTime = 0
+        if (parent.checkValue(data, 'Reserve_Time_H')) {
+            delayTime += (data["Reserve_Time_H"] * 60 * 60)
+        }
+        if (parent.checkValue(data, 'Reserve_Time_M')) {
+            delayTime += (data["Reserve_Time_M"] * 60)
+        }
+        def delayTimeDisplay = parent.convertSecondsToTime(delayTime)
+        sendEvent(name: "delayTime", value: delayTime, unit: "seconds")
+        sendEvent(name: "delayTimeDisplay", value: delayTimeDisplay, unit: "hh:mm")
     }
-    def finishTimeDisplay = currentTime.format("yyyy-MM-dd'T'HH:mm:ssZ", location.timeZone)
-
-    if (parent.checkValue(data,'Reserve_Time_H')) {
-      delayTime += (data["Reserve_Time_H"]*60*60)
-    }
-    if (parent.checkValue(data,'Reserve_Time_M')) {
-      delayTime += (data["Reserve_Time_M"]*60)
-    }
-    delayTimeDisplay = parent.convertSecondsToTime(delayTime)
 
     if (parent.checkValue(data,'State')) {
       String currentStateName = parent.cleanEnumValue(data["State"], "@WM_STATE_")
@@ -104,14 +112,6 @@ def processStateData(data) {
       }
       sendEvent(name: "switch", value: currentStateSwitch, descriptionText: "Was turned ${currentStateSwitch}")
     }
-
-    sendEvent(name: "runTime", value: runTime, unit: "seconds")
-    sendEvent(name: "runTimeDisplay", value: runTimeDisplay, unit: "hh:mm")
-    sendEvent(name: "remainingTime", value: remainingTime, unit: "seconds")
-    sendEvent(name: "remainingTimeDisplay", value: remainingTimeDisplay, unit: "hh:mm")
-    sendEvent(name: "delayTime", value: delayTime, unit: "seconds")
-    sendEvent(name: "delayTimeDisplay", value: delayTimeDisplay, unit: "hh:mm")
-    sendEvent(name: "finishTimeDisplay", value: finishTimeDisplay, unit: "hh:mm")
 
     if (parent.checkValue(data,'Error')) {
       sendEvent(name: "error", value: data["Error"].toLowerCase())
