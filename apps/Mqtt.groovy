@@ -179,14 +179,13 @@ class Mqtt {
         return tmf
     }
 
-    void send(String topic, Object payload) {
-        def json = JsonOutput.toJson(payload)
-        log.info("Sending to topic {} message {}", topic, json)
+    void send(String topic, String payload) {
+        log.info("Sending to topic {} message {}", topic, payload)
         client.publishWith()
                 .topic(topic)
                 .qos(MqttQos.AT_MOST_ONCE)
                 .retain(true)
-                .payload(json.getBytes())
+                .payload(payload.getBytes())
                 .send()
     }
 }
