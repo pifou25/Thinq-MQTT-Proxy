@@ -54,7 +54,8 @@ import groovy.json.JsonSlurper
 	201, // Washer
 	202, // Dryer
 	204, // Dishwasher
-	301 // Oven
+	301, // Oven
+	401  // Airconditioner
 ]
 
 @Field static def deviceTypeConstants = [
@@ -62,7 +63,8 @@ import groovy.json.JsonSlurper
 	Washer: 201,
 	Dryer: 202,
 	Dishwasher: 204,
-	Oven: 301
+	Oven: 301,
+	Airconditioner: 401
 ]
 
 @Field static def responseCodeText = [
@@ -344,6 +346,9 @@ def initialize() {
 				break
 			case deviceTypeConstants.Dishwasher:
 				driverName = new ThinQ_Dishwasher()
+				break
+			case deviceTypeConstants.Airconditioner:
+				driverName = new ThinQ_Airconditioner()
 				break
 		}
 		if (!hasV1Device)
