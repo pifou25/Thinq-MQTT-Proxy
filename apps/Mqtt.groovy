@@ -50,7 +50,7 @@ class Mqtt {
 
         log.info("starting connection the server {}...", serverUrl)
         if (userName && password) {
-            client.connectWith().simpleAuth().username(userName).password(password.getBytes()).applySimpleAuth()
+            client.connectWith().simpleAuth().username(userName).password(password.getBytes()).applySimpleAuth().send()
         } else {
             client.connect()
         }
