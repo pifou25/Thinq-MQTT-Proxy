@@ -54,17 +54,21 @@ import groovy.json.JsonSlurper
 	201, // Washer
 	202, // Dryer
 	204, // Dishwasher
+    221, // WashTower - Washer
+    222, // WashTower - Dryer
 	301, // Oven
-	401  // Airconditioner
+	401  // AirConditioner
 ]
 
 @Field static def deviceTypeConstants = [
 	Fridge: 101,
 	Washer: 201,
 	Dryer: 202,
+	WashTowerWasher: 221,
+	WashTowerDryer: 222,
 	Dishwasher: 204,
 	Oven: 301,
-	Airconditioner: 401
+	AirConditioner: 401
 ]
 
 @Field static def responseCodeText = [
@@ -333,9 +337,11 @@ def initialize() {
 		def driverName
 		switch (deviceDetails.type) {
 			case deviceTypeConstants.Dryer:
+            case deviceTypeConstants.WashTowerDryer:
 				driverName = new ThinQ_Dryer()
 				break
 			case deviceTypeConstants.Washer:
+            case deviceTypeConstants.WashTowerWasher:
 				driverName = new ThinQ_Washer()
 				break
 			case deviceTypeConstants.Fridge:
@@ -347,15 +353,15 @@ def initialize() {
 			case deviceTypeConstants.Dishwasher:
 				driverName = new ThinQ_Dishwasher()
 				break
-			case deviceTypeConstants.Airconditioner:
-				driverName = new ThinQ_Airconditioner()
+			case deviceTypeConstants.AirConditioner:
+				driverName = new ThinQ_AirConditioner()
 				break
 		}
 		if (!hasV1Device)
 			hasV1Device = deviceDetails.version == "thinq1"
 		def childDevice = getChildDevice("thinq:"+deviceDetails.id)
 		if (childDevice == null) {
-			childDevice = addChildDevice("dcm.thinq", driverName, "thinq:" + deviceDetails.id, 1234, ["name": deviceDetails.name,isComponent: false])
+			childDevice = addChildDevice("dcm.thinq", driverName, "thinq:" + deviceDetails.id, 1234, ["name": deviceDetails.name, isComponent: false])
 			if (!findMasterDevice() && deviceDetails.version == "thinq2") {
 				childDevice.updateDataValue("master", "true")
 				childDevice.initialize()
@@ -495,6 +501,7 @@ def lgAPIGet(uri) {
 			}
 		}
 		logger("trace", "lgAPIGet(${uri}) - ${result}")
+		state.auth_retry_cnt = 0
 		return result
 	}
 	catch (Exception e) {
@@ -513,6 +520,8 @@ def lgAPIGet(uri) {
 						state.refresh_token = refreshResult.refresh_token
 					if (state.access_token != null & state.auth_retry_cnt < AUTH_RETRY_MAX)
 						return lgAPIGet(uri)
+					else
+						state.auth_retry_cnt = 0
 				}
 			}
 			else {
@@ -544,7 +553,7 @@ def lgAPIPost(uri, body) {
 				else
 					logger("error", "lgAPIPost(${uri}, ${body}) - ${responseCodeText[resp.data.resultCode]}")
 		}
-
+		state.auth_retry_cnt = 0
 		logger("trace", "lgAPIPost(${uri}, ${body}) - ${result}")
 		return result
 	}
@@ -567,6 +576,8 @@ def lgAPIPost(uri, body) {
 						state.refresh_token = refreshResult.refresh_token
 					if (state.access_token != null & state.auth_retry_cnt < AUTH_RETRY_MAX)
 						return lgAPIPost(uri, body)
+					else
+						state.auth_retry_cnt = 0
 				}
 			}
 			else
@@ -756,6 +767,8 @@ def lgEdmPost(url, body, refresh = true) {
 					loginv1()
 					if (state.access_token != null && refresh & state.auth_retry_cnt < AUTH_RETRY_MAX)
 						return lgEdmPost(url, body, false)
+					else
+						state.auth_retry_cnt = 0
 				}
 			}
 			else {
@@ -763,6 +776,7 @@ def lgEdmPost(url, body, refresh = true) {
 				return null
 			}
 		}
+		state.auth_retry_cnt = 0
 	}
 	catch (Exception e) {
 		def data = e?.getResponse()?.data
@@ -780,6 +794,8 @@ def lgEdmPost(url, body, refresh = true) {
 						state.refresh_token = refreshResult.refresh_token
 					if (state.access_token != null & state.auth_retry_cnt < AUTH_RETRY_MAX)
 						return lgEdmPost(url, body)
+					else
+						state.auth_retry_cnt = 0
 				}
 			}
 			else {
@@ -801,6 +817,10 @@ def getDevices() {
 	if (data) {
 		def devices = data.item
 		logger("info", "Found ${devices?.size()} devices")
+	
+        devices.each {
+            logger("info", "modelJsonUri: ${it.modelJsonUri}, id: ${it.deviceId}, name: ${it.alias}, type: ${it.deviceType}, version: ${it.platformType}, supported: ${supportedDeviceTypes.contains(it.deviceType) ? "True" : " False"}")
+	    }
 
 		return devices.findAll { d -> supportedDeviceTypes.find { supported -> supported == d.deviceType } }
 	}
@@ -1193,8 +1213,19 @@ def processMqttMessage(dev, payload) {
 
 def findMQTTDataNode(modelInfo, data) {
 	logger("debug", "findMQTTDataNode(${data})")
-	def controlWifi = modelInfo.ControlWifi
-	def key = controlWifi.keySet()[0]
+	def key = ""
+    def controlWifi = null
+    
+    if (modelInfo.containsKey("ControlDevice")) {
+    	def ControlDevice = modelInfo.ControlDevice[0]
+		key = ControlDevice.keySet()[0]
+    	return data
+    }
+    else {
+		controlWifi = modelInfo.ControlWifi
+ 	   	key = controlWifi.keySet()[0]
+	}
+	
 	if (modelInfo?.Config?.targetRoot != null) 
 		return data."${modelInfo.Config.targetRoot}"
 	else if (controlWifi[key].containsKey("data")) {
@@ -1279,11 +1310,19 @@ def decodeMQTTMessage(dev, modelInfo, data) {
 		}
 	}
 	// Thinqv2 style
-	else if (modelInfo.MonitoringValue != null) {
-		for (parameter in modelInfo.MonitoringValue.keySet()) {
-			if (data[parameter] != null) {
-				def parsedValue = getParsedMqttValue(data[parameter], modelInfo.MonitoringValue[parameter], modelInfo, dev)
-				output."${thinq2To1Mapping[parameter] ?: parameter}" = parsedValue
+	else {
+		def key = null
+		if (modelInfo.MonitoringValue != null)
+			key = modelInfo.MonitoringValue
+		else if (modelInfo.Value != null)
+			key = modelInfo.Value
+
+		if (key != null) {
+			for (parameter in key.keySet()) {
+				if (data[parameter] != null) {
+					def parsedValue = getParsedMqttValue(data[parameter],key[parameter], modelInfo, dev)
+					output."${thinq2To1Mapping[parameter] ?: parameter}" = parsedValue
+				}
 			}
 		}
 	}
