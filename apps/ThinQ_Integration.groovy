@@ -380,7 +380,7 @@ def initialize() {
 	}
 
 	if (hasV1Device)
-		schedule("0 */1 * * * ? *", refreshV1Devices)
+		schedule()
 }
 
 def getDeviceSnapshot(devDetails, child) {
@@ -1057,7 +1057,9 @@ def getRTIData(workList) {
 						}
 						else {
 							// It's already JSON (I think?)
-							result[deviceId] = data
+							def jsonSlurper = new JsonSlurper()
+							def text = new String(data)
+							result[deviceId] = jsonSlurper.parseText(text)
 						}
 					}
 				}
@@ -1411,6 +1413,8 @@ Device addChildDevice(String s1, Device driverName, String deviceNetworkId, int 
 	return driverName
 }
 
-void schedule(String cron, Boolean refreshV1Devices) {
-	// nop
+void schedule() {
+	new Timer().schedule({
+		refreshV1Devices()
+	} as TimerTask, 1000 * 60, 1000 * 60)
 }
