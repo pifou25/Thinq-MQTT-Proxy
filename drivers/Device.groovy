@@ -110,6 +110,7 @@ class Device {
     }
 
     void updateDataValue(String key, String value) {
+        log.debug("updateDataValue($key, $value)");
         meta[key] = value
     }
 
@@ -140,6 +141,4 @@ class Device {
     static def celsiusToFahrenheit(def temp) {
         null
     }
-
-
 }

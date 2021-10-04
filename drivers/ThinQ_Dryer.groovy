@@ -50,6 +50,9 @@ def processStateData(data) {
 
     if (parent.checkValue(data,'Initial_Time_H')) {
       runTime += (data["Initial_Time_H"]*60*60)
+      updateDataValue("initialHours", data["Initial_Time_H"].toString())
+    } else {
+      runTime += (getDataValue("initialHours") ?: "0").toInteger()*60*60
     }
     if (parent.checkValue(data,'Initial_Time_M')) {
       runTime += (data["Initial_Time_M"]*60)
@@ -58,6 +61,9 @@ def processStateData(data) {
 
     if (parent.checkValue(data,'Remain_Time_H')) {
       remainingTime += (data["Remain_Time_H"]*60*60)
+      updateDataValue("remainHours", data["Remain_Time_H"].toString())
+    } else {
+      remainingTime += (getDataValue("remainHours") ?: "0").toInteger()*60*60
     }
     if (parent.checkValue(data,'Remain_Time_M')) {
       remainingTime += (data["Remain_Time_M"]*60)
@@ -72,6 +78,9 @@ def processStateData(data) {
 
     if (parent.checkValue(data,'Reserve_Time_H')) {
       delayTime += (data["Reserve_Time_H"]*60*60)
+      updateDataValue("reserveHours", data["Reserve_Time_H"].toString())
+    } else {
+      delayTime += (getDataValue("reserveHours") ?: "0").toInteger()*60*60
     }
     if (parent.checkValue(data,'Reserve_Time_M')) {
       delayTime += (data["Reserve_Time_M"]*60)
@@ -117,9 +126,9 @@ def processStateData(data) {
     if (parent.checkValue(data,'SmartCourse'))
         sendEvent(name: "smartCourse", value: data["SmartCourse"] != 0 ? data["SmartCourse"]?.toLowerCase() : "none")
     if (parent.checkValue(data,'DryLevel'))
-        sendEvent(name: "dryLevel", value: parent.cleanEnumValue(data["DryLevel"], "@WM_DRY27_DRY_LEVEL_"))
+        sendEvent(name: "dryLevel", value: parent.cleanEnumValue(data["DryLevel"], "@WM_DRY24_DRY_LEVEL_"))
     if (parent.checkValue(data,'TempControl'))
-        sendEvent(name: "temperatureLevel", value: parent.cleanEnumValue(data["TempControl"], "@WM_DRY27_TEMP_"))
+        sendEvent(name: "temperatureLevel", value: parent.cleanEnumValue(data["TempControl"], "@WM_DRY24_TEMP_"))
     if (parent.checkValue(data,'TimeDry'))
         sendEvent(name: "timeDry", value: data["TimeDry"])
 }
