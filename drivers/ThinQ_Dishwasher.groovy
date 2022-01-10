@@ -64,7 +64,7 @@ def processStateData(data) {
       updateDataValue("initialHours", data["Initial_Time_H"].toString())
     }
     else {
-      runTime += (getDataValue("initialHours") ?: "0").toInteger()*60*60
+      runTime += (getDataValue("initialHours") ?: "0").toFloat().toInteger()*60*60
     }
     if (parent.checkValue(data,'Initial_Time_M')) {
       runTime += (data["Initial_Time_M"]*60)
@@ -76,7 +76,7 @@ def processStateData(data) {
       updateDataValue("remainHours", data["Remain_Time_H"].toString())
     }
     else {
-      remainingTime += (getDataValue("remainHours") ?: "0").toInteger()*60*60
+      remainingTime += (getDataValue("remainHours") ?: "0").toFloat().toInteger()*60*60
     }
     if (parent.checkValue(data,'Remain_Time_M')) {
       remainingTime += (data["Remain_Time_M"]*60)
@@ -95,7 +95,7 @@ def processStateData(data) {
       updateDataValue("reserveHours", data["Reserve_Time_H"].toString())
     }
     else {
-      delayTime += (getDataValue("reserveHours") ?: "0").toInteger()*60*60
+      delayTime += (getDataValue("reserveHours") ?: "0").toFloat().toInteger()*60*60
     }
     if (parent.checkValue(data,'Reserve_Time_M')) {
       delayTime += (data["Reserve_Time_M"]*60)
