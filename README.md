@@ -1,3 +1,5 @@
+[![Docker Build and Push](https://github.com/pifou25/Thinq-MQTT-Proxy/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/pifou25/Thinq-MQTT-Proxy/actions/workflows/dockerhub.yml)
+
 # LG Thinq MQTT Proxy
 
 This application can connect to LG Thinq infrastructure and register for the updates coming from smart LG devices. Received messages are converted into JSON payload and sent to your private MQTT server. This way you can enhance your home automation (like OpenHab or HomeAssistant) thanks to received notifications from your fridge or washing machine.
