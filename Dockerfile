@@ -20,3 +20,6 @@ EXPOSE 8080
 ENTRYPOINT ["java","-jar","/home/app/thinq-mqtt-proxy.jar"]
 CMD ["java","-jar","/home/app/thinq-mqtt-proxy.jar","run"]
 
+
+# docker run -it --rm --name my-maven-project -v C:\Users\LENOVO\Documents\GitHub\Thinq-MQTT-Proxy:/usr/src/mymaven -w /usr/src/mymaven maven:3.8-openjdk-18 mvn clean install
+# docker run --rm -ti --name thinq-mqtt -v C:\Users\LENOVO\Documents\GitHub\Thinq-MQTT-Proxy\target:/opt/app -w /opt/app eclipse-temurin:18-alpine java -jar thinq-mqtt-proxy.jar init
