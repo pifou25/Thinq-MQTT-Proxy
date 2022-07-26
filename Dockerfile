@@ -1,8 +1,8 @@
 #
 # build with maven image:
-# docker run -it --rm --name my-maven-project -v "$PWD":/usr/src/mymaven -w /usr/src/mymaven maven:3.8-openjdk-18 mvn clean install
+# docker run -it --rm --name my-maven-project -v "$PWD":/usr/src/mymaven -w /usr/src/mymaven maven:3.8-openjdk-11 mvn clean install
 #
-FROM maven:3.8-eclipse-temurin-18-alpine AS build
+FROM maven:3.8-eclipse-temurin-11-alpine AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -q -f /home/app/pom.xml clean package
@@ -10,9 +10,9 @@ RUN mvn -q -f /home/app/pom.xml clean package
 
 #
 # run with java image:
-# docker run --rm -ti --name thinq-mqtt -v "$PWD"/target:/opt/app -w /opt/app eclipse-temurin:18-alpine java -jar thinq-mqtt-proxy.jar init
+# docker run --rm -ti --name thinq-mqtt -v "$PWD":/opt/app -w /opt/app eclipse-temurin:11-alpine java -jar target/thinq-mqtt-proxy.jar init
 #
-FROM eclipse-temurin:18-alpine
+FROM eclipse-temurin:11-alpine
 COPY --from=build /home/app/target/thinq-mqtt-proxy.jar /home/app/thinq-mqtt-proxy.jar
 WORKDIR /home/app
 COPY state-example.json state.json
