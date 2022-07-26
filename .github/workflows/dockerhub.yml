@@ -46,6 +46,6 @@ jobs:
         # this job build the docker image and push into Docker Hub
         uses: docker/build-push-action@v3
         with:
-          # platforms: amd64,arm64,arm,windows,ppc64le
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: pifou25/thinq_mqtt:latest
