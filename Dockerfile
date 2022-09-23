@@ -1,7 +1,7 @@
 #
 # build with maven image:
 #
-FROM maven:amazoncorretto AS build
+FROM maven:3.8.6-amazoncorretto-8 AS build
 COPY apps /home/app/apps
 COPY drivers /home/app/drivers
 COPY src /home/app/src
