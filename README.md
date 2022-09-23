@@ -1,4 +1,4 @@
-[![Docker Build and Push](https://github.com/pifou25/Thinq-MQTT-Proxy/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/pifou25/Thinq-MQTT-Proxy/actions/workflows/dockerhub.yml)
+[![Docker Build and Push](https://github.com/dkneisz/Thinq-MQTT-Proxy/actions/workflows/dockerhub.yml/badge.svg)](https://github.com/dkneisz/Thinq-MQTT-Proxy/actions/workflows/dockerhub.yml)
 
 # LG Thinq MQTT Proxy
 
