@@ -57,6 +57,24 @@ It should create and start `thinq-mqtt-proxy` service. You can verify if works c
 sudo systemctl status thinq-mqtt-proxy.service
 ```
 
+### As a docker container
+
+Before you build the docker container build and execute the app with "init" to get a working state.json.
+Then build the container using
+```shell
+docker build -t thinq2mqtt .
+```
+
+You can now now start the container using the image and linking you state.json to "/home/app/state.json".
+Make sure to set the timezone by passing an environment variable "TZ" using the timezone from
+https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+Example:
+```shell
+docker run -p 8080:8080 thinq2mqtt -e "TZ=Europe/Vienna" -v=/home/app/state.json:</path/to>/state.json
+```
+
+
 ## Items to do
 
 1. [x] MQTT reconnects
