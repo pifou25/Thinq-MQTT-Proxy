@@ -117,16 +117,48 @@ def processStateData(data) {
     sendEvent(name: "delayTimeDisplay", value: delayTimeDisplay, unit: "hh:mm")
     sendEvent(name: "finishTimeDisplay", value: finishTimeDisplay, unit: "hh:mm")
 
+    if (parent.checkValue(data, "reservation"))
+      sendEvent(name: "reservation", value: (data["reservation"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "antiCrease"))
+      sendEvent(name: "antiCrease", value: (data["antiCrease"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "childLock"))
+      sendEvent(name: "childLock", value: (data["childLock"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "selfClean"))
+      sendEvent(name: "selfClean", value: (data["selfClean"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "dampDryBeep"))
+      sendEvent(name: "dampDryBeep", value: (data["dampDryBeep"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "handIron"))
+      sendEvent(name: "handIron", value: (data["handIron"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "remoteStart"))
+      sendEvent(name: "remoteStart", value: (data["remoteStart"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "standby"))
+      sendEvent(name: "standby", value: (data["standby"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "dnnReady"))
+      sendEvent(name: "dnnReady", value: (data["dnnReady"] =~ /ON/ ? "on" : "off"))
+
     if (parent.checkValue(data,'Error')) {
-      sendEvent(name: "error", value: data["Error"].toLowerCase())
+      if(data["Error"] == "ERROR_NOERROR")
+        sendEvent(name: "error", value: "noerror")
+      else
+        sendEvent(name: "error", value: parent.cleanEnumValue(data["Error"], "@WM_US_DRYER_ERROR_"))
     }
 
     if (parent.checkValue(data,'Course'))
         sendEvent(name: "course", value: data["Course"] != 0 ? data["Course"]?.toLowerCase() : "none")
     if (parent.checkValue(data,'SmartCourse'))
         sendEvent(name: "smartCourse", value: data["SmartCourse"] != 0 ? data["SmartCourse"]?.toLowerCase() : "none")
-    if (parent.checkValue(data,'DryLevel'))
+    if (parent.checkValue(data,'DryLevel')) {
+      if(data["DryLevel"] == "@WM_TERM_NO_SELECT_W")
+        sendEvent(name: "dryLevel", value: "no drylevel")
+      else
         sendEvent(name: "dryLevel", value: parent.cleanEnumValue(data["DryLevel"], "@WM_DRY24_DRY_LEVEL_"))
+    }
+    if (parent.checkValue(data,'ecoHybrid')) {
+      if(data["ecoHybrid"] == "@WM_TERM_NO_SELECT_W")
+        sendEvent(name: "ecoHybrid", value: "no ecohybrid")
+      else
+        sendEvent(name: "ecoHybrid", value: parent.cleanEnumValue(data["ecoHybrid"], "@WM_DRY24_"))
+    }
     if (parent.checkValue(data,'TempControl'))
         sendEvent(name: "temperatureLevel", value: parent.cleanEnumValue(data["TempControl"], "@WM_DRY24_TEMP_"))
     if (parent.checkValue(data,'TimeDry'))
