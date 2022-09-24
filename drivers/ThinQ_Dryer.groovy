@@ -157,7 +157,7 @@ def processStateData(data) {
       if(data["ecoHybrid"] == "@WM_TERM_NO_SELECT_W")
         sendEvent(name: "ecoHybrid", value: "no ecohybrid")
       else
-        sendEvent(name: "ecoHybrid", value: parent.cleanEnumValue(data["ecoHybrid"], "@WM_DRY24_"))
+        sendEvent(name: "ecoHybrid", value: parent.cleanEnumValue(data["ecoHybrid"], "@WM_DRY24_ECO_HYBRID_"))
     }
     if (parent.checkValue(data,'TempControl'))
         sendEvent(name: "temperatureLevel", value: parent.cleanEnumValue(data["TempControl"], "@WM_DRY24_TEMP_"))
