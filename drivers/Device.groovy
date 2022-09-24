@@ -96,7 +96,7 @@ class Device {
 
     void sendEvent(LinkedHashMap<String, Object> eventMap) {
         log.info("{}", eventMap)
-        interfaces.pubMqtt.send("thinq/" + friendlyName + "/event/" + eventMap.name, eventMap.value.toString())
+        interfaces.pubMqtt.send(parent.state.pubMqttTopic + "/" + friendlyName + "/event/" + eventMap.name, eventMap.value.toString())
     }
 
     void pauseExecution(int timeInMs) {
