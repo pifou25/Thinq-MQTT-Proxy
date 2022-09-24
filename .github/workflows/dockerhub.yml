@@ -48,4 +48,6 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: dkneisz/thinq2mqtt:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt:latest
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt:buildcache,mode=max
