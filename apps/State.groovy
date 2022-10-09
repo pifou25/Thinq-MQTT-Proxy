@@ -8,6 +8,7 @@ class State {
     def pubMqttServer
     def pubMqttTopic
     def pubClientId
+    def pubMqttLWTTopic
     def client_id
     def auth_retry_cnt
     def langCode

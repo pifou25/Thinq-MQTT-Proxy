@@ -5,5 +5,8 @@
     "langCode": "pl-PL",
     "certSource": "Use Cloud Service",
     "pubClientId": "thinq",
-    "pubMqttTopic": "thinq"
+    "pubMqttTopic": "thinq",
+    "pubUserName": "mqtt",
+    "pubPassword": "TopSecretPW",
+    "pubMqttLWTTopic": "thinq/LWT"
 }

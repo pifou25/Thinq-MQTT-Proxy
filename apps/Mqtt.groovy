@@ -39,6 +39,9 @@ class Mqtt {
     }
 
     void connect(String serverUrl, String clientId, String userName, String password) {
+        connect(serverUrl, clientId, username, password, null)
+    }
+    void connect(String serverUrl, String clientId, String userName, String password, String lwtTopic) {
         URI uri = new URI(serverUrl)
         client = MqttClient.builder()
                 .identifier(clientId)
@@ -49,9 +52,31 @@ class Mqtt {
                 .buildAsync()
 
         log.info("starting connection the server {}...", serverUrl)
-        if (userName && password) {
-            client.connectWith().simpleAuth().username(userName).password(password.getBytes()).applySimpleAuth().send()
-        } else {
+        if (userName && password && lwtTopic) {
+            client.connectWith()
+                .willPublish()
+                .topic(lwtTopic)
+                .payload("offline".getBytes())
+                .qos(MqttQos.AT_MOST_ONCE)
+                .retain(true)
+                .applyWillPublish()
+                .simpleAuth().username(userName).password(password.getBytes()).applySimpleAuth().send()
+                .whenComplete((connAck, throwable) -> {
+                    send(lwtTopic, "online")
+                });
+        } else if (lwtTopic) {
+            client.connectWith()
+                .willPublish()
+                .topic(lwtTopic)
+                .payload("offline".getBytes())
+                .qos(MqttQosl.AT_MOST_ONCE)
+                .retain(true)
+                .applyWillPublish()
+                .send()
+                .whenComplete((connAck, throwable) -> {
+                    send(lwtTopic, "online")
+                });
+        } else{
             client.connect()
         }
         log.info("connected!")
