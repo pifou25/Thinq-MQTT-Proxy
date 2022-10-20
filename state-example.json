@@ -8,5 +8,6 @@
     "pubMqttTopic": "thinq",
     "pubUserName": "mqtt",
     "pubPassword": "TopSecretPW",
-    "pubMqttLWTTopic": "thinq/LWT"
+    "pubMqttLWTTopic": "thinq/LWT",
+    "pollTime": 30
 }

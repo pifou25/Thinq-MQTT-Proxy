@@ -5,6 +5,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 class State {
+    def pollTime
     def pubMqttServer
     def pubMqttTopic
     def pubClientId

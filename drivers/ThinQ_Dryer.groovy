@@ -39,6 +39,7 @@ class ThinQ_Dryer extends Device {
 
 def processStateData(data) {
     logger("debug", "processStateData(${data})")
+    super.processStateData(data)
 
     def runTime = 0
     def runTimeDisplay = '00:00'

@@ -206,7 +206,7 @@ def prefMain() {
 		if (mqttResult.mqttServer != "ssl://common.iot.aic.lgthinq.com:8883" && !mqttResult.mqttServer.contains("-ats.iot")) {
     		def mqttServerParts = mqttResult.mqttServer.split(".iot.")
     		state.mqttServer = mqttServerParts[0]+'-ats.iot.'+mqttServerParts[1]
-		}            
+		}            .
         else
 			state.mqttServer = mqttResult.mqttServer
 	}
@@ -376,7 +376,9 @@ def initialize() {
 			childDevice.initialize()
 		}
 		if (deviceDetails.version == "thinq2") {
-			getDeviceSnapshot(deviceDetails, childDevice)
+			new Timer().schedule({
+				getDeviceSnapshot(deviceDetails, childDevice)
+			} as TimerTask, 0, 1000 * 60 * state.pollTime)
 		}
 	}
 
