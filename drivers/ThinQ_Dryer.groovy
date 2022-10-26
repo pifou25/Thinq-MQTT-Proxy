@@ -136,6 +136,8 @@ def processStateData(data) {
       sendEvent(name: "standby", value: (data["standby"] =~ /ON/ ? "on" : "off"))
     if (parent.checkValue(data, "dnnReady"))
       sendEvent(name: "dnnReady", value: (data["dnnReady"] =~ /ON/ ? "on" : "off"))
+    if (parent.checkValue(data, "courseDryer24inchBase"))
+      sendEvent(name: "courseDryer24inchBase", value: data["courseDryer24inchBase"])
 
     if (parent.checkValue(data,'Error')) {
       if(data["Error"] == "ERROR_NOERROR")
