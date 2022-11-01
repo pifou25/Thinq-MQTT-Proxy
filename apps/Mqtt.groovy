@@ -5,6 +5,10 @@
 import com.hivemq.client.mqtt.MqttClient
 import com.hivemq.client.mqtt.MqttClientSslConfig
 import com.hivemq.client.mqtt.MqttClientState
+import com.hivemq.client.mqtt.lifecycle.MqttClientConnectedContext
+import com.hivemq.client.mqtt.lifecycle.MqttClientConnectedListener
+import com.hivemq.client.mqtt.lifecycle.MqttClientDisconnectedContext
+import com.hivemq.client.mqtt.lifecycle.MqttClientDisconnectedListener
 import com.hivemq.client.mqtt.datatypes.MqttQos
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient
 import groovy.json.JsonOutput
@@ -97,6 +101,18 @@ class Mqtt {
                 .useMqttVersion3()
                 .automaticReconnectWithDefaultConfig()
                 .sslConfig(sslConfig)
+                .addDisconnectedListener(new MqttClientDisconnectedListener() {
+                    @Override
+                    public void onDisconnected( MqttClientDisconnectedContext context) {
+                        log.warn("Disconnected")
+                    }
+                })
+                .addConnectedListener(new MqttClientConnectedListener() {
+                    @Override
+                    public void onConnected(MqttClientConnectedContext context) {
+                        log.info("Connected")
+                    }
+                })
                 .buildAsync()
 
 
