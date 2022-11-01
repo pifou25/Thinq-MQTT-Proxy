@@ -102,6 +102,7 @@ class Mqtt {
 
         log.info("starting connection the server {}...", serverUrl)
         client.connect()
+        //client.connectWith().keepAlive(30)
         log.info("connected!")
     }
 

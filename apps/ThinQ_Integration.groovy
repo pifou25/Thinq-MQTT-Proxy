@@ -206,9 +206,9 @@ def prefMain() {
 		if (mqttResult.mqttServer != "ssl://common.iot.aic.lgthinq.com:8883" && !mqttResult.mqttServer.contains("-ats.iot")) {
     		def mqttServerParts = mqttResult.mqttServer.split(".iot.")
     		state.mqttServer = mqttServerParts[0]+'-ats.iot.'+mqttServerParts[1]
-		}            .
-        else
+		} else {
 			state.mqttServer = mqttResult.mqttServer
+		}
 	}
 
 //	return dynamicPage(name: "prefMain", title: "LG ThinQ OAuth", nextPage: "prefCert", uninstall:false, install: false) {
