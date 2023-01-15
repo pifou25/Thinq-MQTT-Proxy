@@ -688,6 +688,7 @@ def getAccessToken(body) {
 		}
 	}
 	catch (Exception e) {
+		logger("error", "getAccessToken - ${e}")
 		def data = e?.getResponse()?.data
 		if (data != null) {
 			logger("error", "getAccessToken(${body}) - OAuth error: ${data.error.code}: ${data.error.message}")

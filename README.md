@@ -71,7 +71,7 @@ https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 First step is to init the state.json file with the authentication url: run a container in interactive mode (-ti) and with 'init' parameter.
 On non-unix system, replace $PWD by the current working directory on your host.
 ```shell
-docker run -ti --rm -e "TZ=Europe/Paris" -v=$PWD/state-example.json:/home/app/state.json thinq2mqtt init
+docker run -ti --rm -e "TZ=Europe/Paris" --name thinq2mqtt -v=$PWD/state-example.json:/home/app/state.json thinq2mqtt init
 ```
 
 Second step is just to start the container with the json file
