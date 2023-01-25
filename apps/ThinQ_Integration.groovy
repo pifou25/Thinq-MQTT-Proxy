@@ -508,7 +508,7 @@ def lgAPIGet(uri) {
 		return result
 	}
 	catch (Exception e) {
-		if (e instanceof java.net.UnknownHostException) {
+		if (e instanceof java.net.UnknownHostException || e instanceof javax.net.ssl.SSLHandshakeException) {
 			logger("error", "lgAPIGet(${uri}) - ${e.getMessage()}")
 		} else {
 			def data = e?.getResponse()?.data
