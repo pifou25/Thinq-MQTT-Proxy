@@ -88,6 +88,7 @@ Example:
 docker run thinq2mqtt -e "TZ=Europe/Vienna" -v=/home/app/state.json:</path/to>/state.json \
                                             -v=/home/app/logs:</path/to/>logs \
                                             -v=/home/app/logback.xml:</path/to/>logback.xml
+```
 
 ## Items to do
 
