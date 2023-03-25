@@ -22,7 +22,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/thinq2mqtt
       -
         name: Set up QEMU
         # https://github.com/marketplace/actions/docker-setup-qemu
@@ -62,7 +62,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/thinq2mqtt:latest
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/thinq2mqtt:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/thinq2mqtt:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/thinq2mqtt:buildcache,mode=max
