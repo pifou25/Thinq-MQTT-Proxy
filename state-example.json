@@ -2,9 +2,12 @@
     "region": "fr-FR",
     "countryCode": "FR",
     "pubMqttServer": "tcp://mqtt:1883",
-    "pubUserName": "zwave",
-    "pubPassword": "zwave",
     "langCode": "fr-FR",
     "certSource": "Use Cloud Service",
-    "pubClientId": "thinq"
+    "pubClientId": "thinq",
+    "pubMqttTopic": "thinq",
+    "pubUserName": "mqtt",
+    "pubPassword": "TopSecretPW",
+    "pubMqttLWTTopic": "thinq/LWT",
+    "pollTime": 30
 }

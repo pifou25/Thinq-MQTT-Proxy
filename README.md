@@ -79,6 +79,16 @@ Second step is just to start the container with the json file
 docker run -e "TZ=Europe/Paris" --name thinq2mqtt -v=$PWD/state-example.json:/home/app/state.json thinq2mqtt
 ```
 
+#### Logging configuration
+
+Per default logging is configured to create a rolling logfile in `/home/app/logs` called `thinq-mqtt-proxy.log`. For configuration the file `/home/app/logback.xml` is used. When creating the container you can mount the folder and file to your local disk. This way you have acces to the logs and they are preserved when recreating the container. You can also change the logging configuration by editing your local file.
+
+Example:
+```shell
+docker run thinq2mqtt -e "TZ=Europe/Vienna" -v=/home/app/state.json:</path/to>/state.json \
+                                            -v=/home/app/logs:</path/to/>logs \
+                                            -v=/home/app/logback.xml:</path/to/>logback.xml
+
 ## Items to do
 
 1. [x] MQTT reconnects
