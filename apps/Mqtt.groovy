@@ -73,7 +73,7 @@ class Mqtt {
                 .willPublish()
                 .topic(lwtTopic)
                 .payload("offline".getBytes())
-                .qos(MqttQosl.AT_MOST_ONCE)
+                .qos(MqttQos.AT_MOST_ONCE)
                 .retain(true)
                 .applyWillPublish()
                 .send()
